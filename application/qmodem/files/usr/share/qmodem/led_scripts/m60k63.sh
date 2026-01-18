@@ -42,15 +42,21 @@ last_netstat=""
 
 led_turn() {
 	local path="/sys/class/leds/$1"
-	local brightness="$2"
-
+	local value="$2"
+	max_brightness=$(cat "$path/max_brightness")
+	if [ "$value" = "1" ]; then
+		brightness=$max_brightness
+	else
+		brightness="0"
+	fi
 	echo "$brightness" > "$path/brightness"
 }
 
 led_heartbeat() {
 	local path="/sys/class/leds/$1"
+	max_brightness=$(cat "$path/max_brightness")
 
-	echo "1" > "$path/brightness"
+	echo "$max_brightness" > "$path/brightness"
 	echo "heartbeat" > "$path/trigger"
 }
 
